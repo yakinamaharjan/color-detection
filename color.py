@@ -1,22 +1,25 @@
 import numpy as np
+import pandas as pd
 import cv2
 
-color_ranges = {
-    "Red": [(0, 120, 70), (10, 255, 255)],
-    "Green": [(40, 40, 40), (80, 255, 255)],
-    "Blue": [(100, 150, 0), (140, 255, 255)],
-    "Yellow": [(20, 100, 100), (30, 255, 255)],
-    "Orange": [(10, 100, 100), (20, 255, 255)],
-    "Purple": [(130, 50, 50), (160, 255, 255)],
-    "White": [(0, 0, 200), (180, 30, 255)],
-    "Black": [(0, 0, 0), (180, 255, 30)]
-}
+df = pd.read_csv("color_names.csv")
 
-def get_color_name(hsv_pixel):
-    """Determine the color name based on HSV value."""
-    for color, (lower, upper) in color_ranges.items():
-        lower = np.array(lower, dtype=np.uint8)
-        upper = np.array(upper, dtype=np.uint8)
-        if cv2.inRange(np.array([[hsv_pixel]], dtype=np.uint8), lower, upper):
-            return color
-    return "Unknown"
+df = df[['Name', 'Red (8 bit)', 'Green (8 bit)', 'Blue (8 bit)']]
+
+def get_color_name(r, g, b):
+    """Find the closest color from the dataset."""
+    distances = np.sqrt((df['Red (8 bit)'] - r) ** 2 +
+                        (df['Green (8 bit)'] - g) ** 2 +
+                        (df['Blue (8 bit)'] - b) ** 2)
+    return df.loc[distances.idxmin(), 'Name']
+
+
+# def get_color_name(hsv_pixel):
+#     """Determine the color name based on HSV value."""
+#     hsv_pixel = np.array(hsv_pixel, dtype=np.uint8)  # Ensure it's a NumPy array
+#     for color, (lower, upper) in color_ranges.items():
+#         lower = np.array(lower, dtype=np.uint8)
+#         upper = np.array(upper, dtype=np.uint8)
+#         if all(lower <= hsv_pixel) and all(hsv_pixel <= upper):  # Fix condition check
+#             return color
+#     return "Unknown"
