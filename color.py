@@ -12,14 +12,3 @@ def get_color_name(r, g, b):
                         (df['Green (8 bit)'] - g) ** 2 +
                         (df['Blue (8 bit)'] - b) ** 2)
     return df.loc[distances.idxmin(), 'Name']
-
-
-# def get_color_name(hsv_pixel):
-#     """Determine the color name based on HSV value."""
-#     hsv_pixel = np.array(hsv_pixel, dtype=np.uint8)  # Ensure it's a NumPy array
-#     for color, (lower, upper) in color_ranges.items():
-#         lower = np.array(lower, dtype=np.uint8)
-#         upper = np.array(upper, dtype=np.uint8)
-#         if all(lower <= hsv_pixel) and all(hsv_pixel <= upper):  # Fix condition check
-#             return color
-#     return "Unknown"
